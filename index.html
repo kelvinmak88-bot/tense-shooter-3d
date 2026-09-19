@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tense Shooter 3D - 英文時態射擊遊戲</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <canvas id="game-canvas"></canvas>
+  <button id="btn-sound" class="btn-sound" title="Toggle Sound">🔊</button>
+  <button id="btn-voice" class="btn-voice" title="Voice ON">🗣️</button>
+
+  <!-- ═══ MENU ═══ -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-title">
+      <div class="menu-emoji">🎯📚</div>
+      <h1>Tense Shooter 3D</h1>
+      <p>英文時態射擊遊戲 · Learn & Play!</p>
+      <p id="menu-progress" class="menu-progress">Progress: 0 / 8 tenses learned</p>
+    </div>
+    <div class="menu-buttons">
+      <button id="btn-start" class="btn btn-primary">🚀 Start Game 開始遊戲</button>
+      <button id="btn-how" class="btn btn-outline">❓ How to Play 玩法說明</button>
+    </div>
+  </div>
+
+  <!-- ═══ CHARACTER SELECT ═══ -->
+  <div id="screen-characters" class="screen">
+    <div class="char-preview-bg"></div>
+    <div class="screen-header">
+      <h2>🎭 Choose Your Hero!</h2>
+      <p>選擇你的可愛角色 · Tap to hear their name</p>
+    </div>
+    <div id="char-grid" class="char-grid"></div>
+    <div class="screen-footer">
+      <button id="btn-back-menu" class="btn btn-outline">← Back 返回</button>
+      <button id="btn-confirm-char" class="btn btn-primary">Confirm 確認 →</button>
+    </div>
+  </div>
+
+  <!-- ═══ TENSE SELECT ═══ -->
+  <div id="screen-tenses" class="screen">
+    <div class="screen-header">
+      <h2>📖 Choose a Tense 選擇時態</h2>
+      <p>Learn & play with 8 English tenses!</p>
+    </div>
+    <div id="tense-grid" class="tense-grid"></div>
+    <div class="screen-footer">
+      <button id="btn-back-chars" class="btn btn-outline">← Back 返回</button>
+    </div>
+  </div>
+
+  <!-- ═══ TEACHING ═══ -->
+  <div id="screen-teach" class="screen">
+    <div class="teach-container">
+      <div class="screen-header">
+        <h2>📚 Tense Lesson 時態教學</h2>
+      </div>
+      <div class="teach-progress"><div id="teach-progress-bar" class="teach-progress-bar"></div></div>
+      <div id="teach-content"></div>
+      <div class="teach-nav">
+        <button id="btn-prev-slide" class="btn btn-outline">← Prev</button>
+        <button id="btn-speak-teach" class="btn btn-purple">🔊 Listen</button>
+        <button id="btn-skip-teach" class="btn btn-outline">Skip →</button>
+        <button id="btn-next-slide" class="btn btn-primary">Next 下一步 →</button>
+        <button id="btn-start-game" class="btn btn-secondary" style="display:none">Start Game! 🎮</button>
+      </div>
+      <div id="teach-slide-num" class="teach-slide-num">1 / 5</div>
+    </div>
+  </div>
+
+  <!-- ═══ GAME ═══ -->
+  <div id="screen-game" class="screen">
+    <div class="crosshair"></div>
+    <div id="muzzle-flash" class="muzzle-flash"></div>
+
+    <div class="game-hud">
+      <div class="hud-panel">
+        <div id="hud-tense">Tense</div>
+        <div id="hud-level">Level</div>
+        <div id="timer-label">⏱ 45s</div>
+        <div class="timer-track"><div id="timer-bar" class="timer-bar"></div></div>
+      </div>
+      <div class="hud-panel">
+        <div>Score: <span id="hud-score" class="hud-score">0</span></div>
+        <div>Streak: <span id="hud-streak">0</span> 🔥</div>
+        <div id="hud-lives">❤️❤️❤️</div>
+      </div>
+    </div>
+
+    <div class="question-panel">
+      <div id="question-text">Loading...</div>
+      <div id="question-hint"></div>
+      <div id="q-progress"></div>
+    </div>
+
+    <div id="feedback-msg" class="feedback-msg"></div>
+
+    <div class="game-controls">
+      <button id="btn-speak-q" class="btn-regen btn-speak">🔊 Hear</button>
+      <button id="btn-regenerate" class="btn-regen">🔄 New Questions</button>
+      <button id="btn-pause" class="btn-regen btn-pause">⏸ Pause</button>
+      <button id="btn-quit" class="btn-regen btn-quit">🚪 Quit</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div id="screen-result" class="screen">
+    <div class="result-box">
+      <div id="result-icon">🏆</div>
+      <div id="result-title">Amazing!</div>
+      <div id="result-stars" class="result-stars">⭐⭐⭐</div>
+      <div id="result-score">Score: 0</div>
+      <div id="result-detail"></div>
+      <div class="result-buttons">
+        <button id="btn-play-again" class="btn btn-primary">🔄 Play Again</button>
+        <button id="btn-back-after-game" class="btn btn-exit">🚪 Exit 離開</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODALS ═══ -->
+  <div id="modal-how" class="modal">
+    <div class="modal-box">
+      <h2>❓ How to Play 玩法說明</h2>
+      <ol class="how-steps">
+        <li>🎭 <strong>Choose a character</strong> — 選擇可愛的3D卡通角色</li>
+        <li>📖 <strong>Pick a tense</strong> — 選擇8種英文時態之一</li>
+        <li>📚 <strong>Learn the tense</strong> — 聽教學、看例子（按 🔊 Listen）</li>
+        <li>🎯 <strong>Shoot answers!</strong> — 點擊／觸控射擊正確答案泡泡</li>
+        <li>⏱ <strong>Beat the timer</strong> — 越快答對分數越高</li>
+        <li>⭐ <strong>3 Levels</strong> — 初級／中級／高級（高級泡泡會移動）</li>
+        <li>🔄 <strong>New Questions</strong> — 隨時重新生成新題目</li>
+        <li>🗣️ <strong>Voice</strong> — 右上角可開關語音朗讀</li>
+        <li>⏸ <strong>Pause</strong> — 空白鍵或 Pause 按鈕暫停</li>
+      </ol>
+      <button class="btn btn-primary modal-close" onclick="closeModal()">Got it! 明白了!</button>
+    </div>
+  </div>
+
+  <div id="modal-level" class="modal">
+    <div class="modal-box">
+      <h2 id="level-tense-name">Choose Level</h2>
+      <p style="text-align:center;color:#636e72">選擇難度級別</p>
+      <div id="level-grid"></div>
+      <button class="btn btn-outline modal-close" onclick="closeModal()" style="margin-top:16px">← Back</button>
+    </div>
+  </div>
+
+  <div id="modal-pause" class="modal">
+    <div class="modal-box" style="text-align:center">
+      <h2>⏸ Paused</h2>
+      <p>遊戲已暫停</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+        <button id="btn-resume" class="btn btn-primary">▶ Resume 繼續</button>
+        <button id="btn-quit-pause" class="btn btn-outline">🚪 Quit 離開</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+  <script src="js/extraQuestions.js"></script>
+  <script src="js/tenseData.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
